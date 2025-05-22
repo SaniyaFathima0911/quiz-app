@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Quiz Link</title>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f3f0f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    .link-box {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+      text-align: center;
+    }
+
+    .link-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    a {
+      color: green;
+      font-weight: bold;
+      word-break: break-all;
+    }
+
+    button {
+      padding: 10px 20px;
+      /* background-color: #735d78; */
+      background-color: #6a4e77;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #5e4762;
+    }
+
+    .copy-success {
+      color: green;
+      font-size: 0.9rem;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .animated-blobs {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.4;
+      mix-blend-mode: multiply;
+      animation: blobMove 20s infinite ease-in-out;
+    }
+
+    .blob1 {
+      width: 400px;
+      height: 400px;
+      background: #d1b3c4;
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .blob2 {
+      width: 500px;
+      height: 500px;
+      background: #874f71;
+      bottom: -150px;
+      right: -150px;
+      animation-delay: 5s;
+    }
+
+    @keyframes blobMove {
+      0%, 100% {
+        transform: scale(1) translate(0, 0);
+      }
+
+      25% {
+        transform: scale(1.1) translate(30px, -50px);
+      }
+
+      50% {
+        transform: scale(0.9) translate(-20px, 20px);
+      }
+
+      75% {
+        transform: scale(1.05) translate(40px, 30px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="animated-blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+  </div>
+
+  <div class="link-box">
+    <h2>Quiz Created!</h2>
+    <p>Share this quiz link:</p>
+    <div class="link-container">
+      <p id="quiz-link"></p>
+      <button onclick="copyLink()">Copy Link</button>
+      <div id="copy-success" class="copy-success">Copied!</div>
+    </div>
+    <button onclick="goBack()" style="margin-top: 20px;">Create Another Quiz</button>
+  </div>
+
+  <script>
+    const link = localStorage.getItem("quizLink");
+    const quizLinkElem = document.getElementById("quiz-link");
+    const successMsg = document.getElementById("copy-success");
+
+    quizLinkElem.innerHTML = `<a href="${link}" target="_blank">${link}</a>`;
+
+    function copyLink() {
+      const tempInput = document.createElement("input");
+      tempInput.value = link;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      tempInput.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+
+      successMsg.style.display = "block";
+      setTimeout(() => {
+        successMsg.style.display = "none";
+      }, 2000);
+    }
+
+    function goBack() {
+      localStorage.removeItem("quizLink");
+      window.location.href = "admin.html";
+    }
+  </script>
+
+</body>
+
+</html>

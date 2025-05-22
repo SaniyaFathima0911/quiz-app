@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Create Quiz – Admin</title>
+  <meta charset="UTF-8" />
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f3f0f5;
+      padding: 2rem;
+      color: #3c2f45;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      color: #514055;
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    /* Forms container */
+   #quiz-form, #question-form, #preview {
+    background: white;
+    padding: 2rem 2.5rem;
+    margin-bottom: 1.8rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(115, 93, 120, 0.15);
+    width: 100%;
+    width: 800px;
+    transition: box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    align-items: flex-start;
+     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+    #quiz-form:hover,
+    #question-form:hover,
+    #preview:hover {
+      box-shadow: 0 14px 35px rgba(115, 93, 120, 0.3);
+    }
+
+   label {
+    font-weight: 600;
+    color: #5a4762;
+    display: block;
+    /* margin-bottom: 6px; */
+    font-size: 22px;
+}
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px 15px;
+      /* margin-bottom: 18px; */
+      border: 2px solid #d1b3c4;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      background: #fff;
+      color: #3c2f45;
+      font-weight: 500;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: #735d78;
+      box-shadow: 0 0 8px #735d78;
+      background: #faf7fb;
+    }
+
+    button {
+      display: inline-block;
+      padding: 12px 28px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #735d78, #a583a6);
+      box-shadow: 0 6px 15px rgba(115, 93, 120, 0.45);
+      transition: background-position 0.5s ease, box-shadow 0.4s ease;
+      background-size: 200% 200%;
+      background-position: 0% 50%;
+      user-select: none;
+    }
+
+    button:hover {
+      background-position: 100% 50%;
+      box-shadow: 0 8px 25px rgba(115, 93, 120, 0.7);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    /* Question preview cards */
+    .question-preview {
+      background-color: #fff;
+      border: 2px solid #d1b3c4;
+      border-radius: 12px;
+      margin: 10px 0;
+      padding: 18px 22px;
+      font-weight: 600;
+      color: #4a3a59;
+      box-shadow: 0 5px 15px rgba(115, 93, 120, 0.1);
+      opacity: 0;
+      transform: translateY(15px);
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    #preview h3 {
+      color: #735d78;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-size: 1.3rem;
+      text-align: center;
+    }
+
+    #quiz-link {
+      margin-top: 2rem;
+      font-weight: 700;
+      color: #3a7a35;
+      font-size: 1.2rem;
+      text-align: center;
+      user-select: all;
+      word-break: break-all;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes glowPulse {
+      0% {
+        text-shadow: 0 0 8px #735d78;
+      }
+
+      100% {
+        text-shadow: 0 0 20px #a583a6, 0 0 35px #735d78;
+      }
+    }
+
+    .animated-blobs {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.4;
+      mix-blend-mode: multiply;
+      animation: blobMove 20s infinite ease-in-out;
+    }
+
+    .blob1 {
+      width: 400px;
+      height: 400px;
+      background: #d1b3c4;
+      top: -100px;
+      left: -100px;
+      animation-delay: 0s;
+    }
+
+    .blob2 {
+      width: 500px;
+      height: 500px;
+      /* background: #735d78; */
+          background: #874f71;
+      bottom: -150px;
+      right: -150px;
+      animation-delay: 5s;
+    }
+
+    @keyframes blobMove {
+
+      0%,
+      100% {
+        transform: scale(1) translate(0, 0);
+      }
+
+      25% {
+        transform: scale(1.1) translate(30px, -50px);
+      }
+
+      50% {
+        transform: scale(0.9) translate(-20px, 20px);
+      }
+
+      75% {
+        transform: scale(1.05) translate(40px, 30px);
+      }
+    }
+
+    .save {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+    }
+    #question-form h3 {
+    font-size: 22px;
+    color: #5a4762;
+}
+div#question-list {
+    width: 100%;
+}
+  </style>
+</head>
+
+<body>
+  <div class="animated-blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+  </div>
+
+  <h2>Create a New Quiz</h2>
+
+  <div id="quiz-form">
+    <label for="quiz-title">Quiz Title:</label>
+    <input type="text" id="quiz-title" placeholder="e.g. JavaScript Basics" />
+  </div>
+
+  <div id="question-form">
+    <h3>Add Question</h3>
+    <textarea type="text" id="question" placeholder="Question text"></textarea>
+    <input type="text" id="option1" placeholder="Option 1" />
+    <input type="text" id="option2" placeholder="Option 2" />
+    <input type="text" id="option3" placeholder="Option 3" />
+    <input type="text" id="option4" placeholder="Option 4" />
+    <select id="correct-answer">
+      <option value="">Select Correct Answer</option>
+      <option value="option1">Option 1</option>
+      <option value="option2">Option 2</option>
+      <option value="option3">Option 3</option>
+      <option value="option4">Option 4</option>
+    </select>
+    <button onclick="addQuestion()">Add Question</button>
+  </div>
+
+  <div id="preview">
+    <h3>Questions Preview</h3>
+    <div id="question-list"></div>
+    <div class="save">
+      <button onclick="saveQuiz()">Save Quiz & Generate Link</button>
+      <button onclick="mainPage()">Back</button>
+    </div>
+  </div>
+
+  <div id="quiz-link"></div>
+
+  <script>
+    // Firebase Config (replace with your own)
+    const firebaseConfig = {
+      apiKey: "AIzaSyC-SZclK5KRhwtorwsC9gnza0NSqeQA4ns",
+      authDomain: "quiz-app-31f43.firebaseapp.com",
+      projectId: "quiz-app-31f43",
+      storageBucket: "quiz-app-31f43.appspot.com",
+      messagingSenderId: "152648052750",
+      appId: "1:152648052750:web:be08810bd7a03367a84c5f"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    let questions = [];
+
+    function addQuestion() {
+      const questionText = document.getElementById("question").value.trim();
+      const option1 = document.getElementById("option1").value.trim();
+      const option2 = document.getElementById("option2").value.trim();
+      const option3 = document.getElementById("option3").value.trim();
+      const option4 = document.getElementById("option4").value.trim();
+      const correct = document.getElementById("correct-answer").value;
+
+      if (!questionText || !option1 || !option2 || !option3 || !option4 || !correct) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      const options = [option1, option2, option3, option4];
+      const correctAnswer = {
+        option1: option1,
+        option2: option2,
+        option3: option3,
+        option4: option4
+      }[correct];
+
+      questions.push({
+        question: questionText,
+        options: options,
+        correctAnswer: correctAnswer
+      });
+
+      renderQuestions();
+      clearForm();
+    }
+
+    function clearForm() {
+      document.getElementById("question").value = "";
+      document.getElementById("option1").value = "";
+      document.getElementById("option2").value = "";
+      document.getElementById("option3").value = "";
+      document.getElementById("option4").value = "";
+      document.getElementById("correct-answer").value = "";
+    }
+
+    function renderQuestions() {
+      const list = document.getElementById("question-list");
+      list.innerHTML = "";
+      questions.forEach((q, index) => {
+        const div = document.createElement("div");
+        div.className = "question-preview";
+        div.innerHTML = `
+          <strong>Q${index + 1}:</strong> ${q.question}<br>
+          <em>Options:</em> ${q.options.join(", ")}<br>
+          <em>Correct:</em> ${q.correctAnswer}
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    async function saveQuiz() {
+      const title = document.getElementById("quiz-title").value.trim();
+      if (!title || questions.length === 0) {
+        alert("Please enter quiz title and at least one question.");
+        return;
+      }
+
+      const docRef = await db.collection("quizzes").add({
+        title: title,
+        questions: questions,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      const quizId = docRef.id;
+      // const link = `${window.location.origin}/quiz.html?quizId=${quizId}`;
+      // document.getElementById("quiz-link").innerHTML = `✅ Quiz saved! Share this link:<br><a href="${link}" target="_blank">${link}</a>`;
+      const link = `${window.location.origin}/quiz.html?quizId=${quizId}`;
+      localStorage.setItem("quizLink", link);  // Save to localStorage
+      window.location.href = "link.html";     // Redirect to another page
+    }
+
+    function mainPage() {
+      window.location.href = "index.html";
+    }
+
+  </script>
+</body>
+
+</html>

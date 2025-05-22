@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Multiple Quiz Results</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            list-style: none;
+            text-decoration: none;
+        }
+        .sidebar {
+            width: 20vw;
+            background: #e7e2e5;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .sidebar h2 {
+            color: #6b21a8;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar ul {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar nav button {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #4d4949;
+            padding: 8px 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            gap: 6px;
+            border: none;
+            background: #e7e2e5;
+            font-size: 17px;
+        }
+
+        .sidebar nav button:hover {
+    color: #453548;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+        .sidebar nav button span {
+            margin-left: 10px;
+        }
+
+        .upgrade button {
+    /* background: #826d88; */
+    background-color: #874f71;
+    padding: 12px 42px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    border-bottom: 4px solid rgb(4 14 65);
+    margin-bottom: 14px;
+    border: #874f71;
+    border-bottom: 4px solid rgb(4 14 65);
+    font-size: 16px;
+}
+
+        .chart-container {
+            width: 400px;
+            margin: 20px auto;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #charts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            width: 80vw;
+        }
+
+        .chart-card {
+            flex: 0 1 280px;
+            background-color: #faf6ff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            padding: 10px;
+            text-align: center;
+        }
+
+        .chart-card canvas {
+            max-width: 100%;
+            height: 250px;
+        }
+
+        .chart-title {
+              font-family: "Segoe UI", sans-serif;
+            color: #0c3a40;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .whole {
+            display: flex;
+        }
+
+        .chart h2 {
+            font-size: 30px;
+            padding: 20px 0;
+            color: #040d3b;
+
+        }
+
+        img {
+            width: 160px;
+            margin-bottom: 20px;
+        }
+
+        #loginBtn {
+            /* background-color: #735d78; */
+            background-color: #6a4e77;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        #loginBtn:hover {
+            background-color: #5f4d61;
+        }
+
+        .section {
+            transition: all 0.3s ease;
+        }
+
+        .text ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .text ul li {
+            margin: 8px 0;
+            font-size: 1rem;
+            line-height: 1.5;
+            list-style: none;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .text ul li::before {
+            content: "✔";
+            position: absolute;
+            left: 0;
+            color: #735d78;
+            font-weight: bold;
+        }
+
+        .solid {
+            width: 80vw;
+            margin: 30px 0;
+        }
+
+        .quiz {
+            width: 95%;
+            margin: auto;
+            display: flex;
+            gap: 14px;
+        }
+
+        .text {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .image {
+            width: 50%;
+            height: 350px;
+        }
+
+        .image video {
+            width: 100%;
+            height: 100%;
+        }
+
+        .possible {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .text p {
+            line-height: 26px;
+        }
+
+        .text button {
+            display: inline-block;
+            padding: 12px 28px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #735d78, #a583a6);
+            box-shadow: 0 6px 15px rgba(115, 93, 120, 0.45);
+            transition: background-position 0.5s ease, box-shadow 0.4s ease;
+            background-size: 200% 200%;
+            background-position: 0% 50%;
+            user-select: none;
+        }
+
+.sidebar button.active,
+.sidebar a.active {
+      color: #45364c;
+    font-weight: bold;
+}
+
+
+    </style>
+
+    </style>
+</head>
+
+<body>
+    <div class="whole">
+        <div class="sidebar">
+            <div>
+                <img src="images/quiz.png" alt="">
+                <div class="upgrade">
+                    <button><a href="admin.html" style="color: white;"><i class="fa-solid fa-plus"
+                            style="color: #ffffff;padding-right: 4px;"></i>Create Quiz</a>
+                            </button>
+                </div>
+                <nav>
+                    <ul>
+                        <li style="display: flex; align-items: center;"><button class="active" onclick="showSection('reports', this)"><i class="fa-regular fa-file"
+                                style="color: #000000;"></i>Reports</button>
+                        </li>
+                        <li style="display: flex; align-items: center;"> <button onclick="showSection('library', this)"><i class="fa-solid fa-plus"
+                                style="color: #000000;"></i>Library</button>
+                        </li>
+                    </ul>
+            </div>
+            </nav><button id="loginBtn">Checking...</button>
+        </div>
+        <!-- <div id="auth-buttons" style="margin-top: 20px;">
+                <button id="loginSignupBtn"
+                    style="padding: 10px; width: 100%; background-color: rgb(3 15 64); color: white; border: none; border-radius: 6px; cursor: pointer;">
+                    Login / Signup
+                </button>
+                <button id="logoutBtn"
+                    style="padding: 10px; width: 100%; background-color: rgb(93 47 116); color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; display: none;">
+                    Logout
+                </button>
+            </div> -->
+        <div class="chart section" id="reports">
+            <h2 style="text-align:center">Reports</h2>
+            <div id="charts"></div>
+        </div>
+
+        <div id="library" class="section solid" style="display: none;">
+            <div class="possible">
+                <h1>Library</h1>
+                <div class="quiz">
+                    <div class="text">
+                        <h2>Create a Quiz</h2>
+                        <p>Start with a clear topic. Break it down into smaller concepts. Create multiple-choice
+                            questions with
+                            one correct and clear answer. Use engaging language and provide feedback where possible.
+                            Test your
+                            quiz to ensure balance and fairness.</p>
+                        <ul>
+                            <li>Choose a topic and quiz title</li>
+                            <li>Add 5–10 relevant questions</li>
+                            <li>Make sure one option is correct</li>
+                            <li>Keep options short and clear</li>
+                        </ul>
+                        <button onclick="create()">Create</button>
+                    </div>
+                    <div class="image">
+                        <video src="images/Screen Recording 2025-05-21 102626.mp4" autoplay loop true></video>
+                    </div>
+                </div>
+                <hr>
+                <div class="quiz">
+                    <div class="text">
+                        <h2>Quiz Results</h2>
+                        <p>After finishing the quiz, you will automatically be redirected to the results page.</p>
+                        <ul>
+                            <li>Total Score and Percentage</li>
+                            <li>Number of Correct and Wrong Answers</li>
+                            <li>Question-by-question Feedback</li>
+                            <li>Correct Answers Highlighted</li>
+                            <li>Click on the below button to go to result page.</li>
+                        </ul>
+                        <button onclick="result()">Result</button>
+                    </div>
+                    <div class="image">
+                        <video src="images/Screen Recording 2025-05-21 104438.mp4" autoplay loop true></video>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+            import { getFirestore, collection, getDocs, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+            import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyC-SZclK5KRhwtorwsC9gnza0NSqeQA4ns",
+                authDomain: "quiz-app-31f43.firebaseapp.com",
+                projectId: "quiz-app-31f43",
+                storageBucket: "quiz-app-31f43.appspot.com",
+                messagingSenderId: "152648052750",
+                appId: "1:152648052750:web:be08810bd7a03367a84c5f",
+                measurementId: "G-H4LN1Y0HWE"
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+
+            const loginBtn = document.getElementById("loginBtn");
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    loginBtn.textContent = "Logout";
+                    loginBtn.onclick = () => {
+                        signOut(auth).then(() => {
+                            alert("Logged out");
+                            window.location.reload();
+                        });
+                    };
+                } else {
+                    loginBtn.textContent = "Login / Signup";
+                    loginBtn.onclick = () => {
+                        window.location.href = "login.html";
+                    };
+                }
+            });
+            const db = getFirestore(app);
+
+            // const app = initializeApp(firebaseConfig);
+            // console.log("Firebase initialized");
+
+            // const auth = getAuth(app);
+            // const provider = new GoogleAuthProvider();
+
+            // const loginSignupBtn = document.getElementById("loginSignupBtn");
+            // const logoutBtn = document.getElementById("logoutBtn");
+
+            // // Detect user login state
+            // onAuthStateChanged(auth, (user) => {
+            //     if (user) {
+            //         console.log("User is logged in:", user.email);
+            //         loginSignupBtn.style.display = "none";
+            //         logoutBtn.style.display = "block";
+            //     } else {
+            //         console.log("No user is logged in.");
+            //         loginSignupBtn.style.display = "block";
+            //         logoutBtn.style.display = "none";
+            //     }
+            // });
+
+            // // Redirect to login page on login/signup button click
+            // loginSignupBtn.addEventListener("click", () => {
+            //     window.location.href = "login.html";
+            // });
+
+            // // Logout user
+            // logoutBtn.addEventListener("click", async () => {
+            //     try {
+            //         await signOut(auth);
+            //         console.log("User signed out.");
+            //         // You can optionally redirect:
+            //         // window.location.href = "login.html";
+            //     } catch (error) {
+            //         console.error("Error during sign out:", error);
+            //     }
+            // });
+
+            const chartContainer = document.getElementById("charts");
+
+            async function renderCharts() {
+                try {
+                    const quizzesSnapshot = await getDocs(collection(db, "quizzes"));
+                    console.log(`Total quizzes found: ${quizzesSnapshot.size}`);
+
+                    quizzesSnapshot.forEach(async (quizDoc) => {
+                        const quizId = quizDoc.id;
+                        const quizTitle = quizDoc.data().title || "Untitled Quiz";
+                        console.log(`Quiz loaded: ${quizTitle} (ID: ${quizId})`);
+
+                        const resultsRef = collection(db, "quizzes", quizId, "results");
+                        const resultsSnapshot = await getDocs(resultsRef);
+                        console.log(`Total results found for "${quizTitle}": ${resultsSnapshot.size}`);
+
+                        let correct = 0;
+                        let incorrect = 0;
+
+                        resultsSnapshot.forEach((resultDoc) => {
+                            const data = resultDoc.data();
+                            if (data.score !== undefined && data.total !== undefined) {
+                                correct += data.score;
+                                incorrect += (data.total - data.score);
+                            }
+                        });
+
+                        console.log(`${quizTitle} - Correct: ${correct}, Incorrect: ${incorrect}`);
+
+                        if (correct + incorrect === 0) {
+                            console.log(`Skipping chart for "${quizTitle}" due to no data`);
+                            return;
+                        }
+
+                        const wrapper = document.createElement("div");
+                        wrapper.className = "chart-card";
+
+                        const title = document.createElement("div");
+                        title.className = "chart-title";
+                        title.textContent = `${quizTitle}`;
+
+                        const canvas = document.createElement("canvas");
+
+                        wrapper.appendChild(title);
+                        wrapper.appendChild(canvas);
+                        chartContainer.appendChild(wrapper);
+
+                        new Chart(canvas, {
+                            type: "pie",
+                            data: {
+                                labels: ["Correct", "Incorrect"],
+                                datasets: [{
+                                    data: [correct, incorrect],
+                                    backgroundColor: ["#6A4E77", "#cd90b3"],
+                                    borderColor: "#ffffff",
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+                                plugins: {
+                                    legend: {
+                                        position: "bottom",
+                                        labels: {
+                                            color: "#0c3a40",
+                                            font: { size: 14 }
+                                        }
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function (context) {
+                                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                const value = context.parsed;
+                                                const percent = ((value / total) * 100).toFixed(1);
+                                                return `(${percent}%)`;
+                                            }
+                                        }
+                                    },
+                                    title: {
+                                        display: false
+                                    }
+                                }
+                            }
+                        });
+
+                        console.log(`Chart rendered for "${quizTitle}"`);
+                    });
+                } catch (error) {
+                    console.error("Error loading quiz data:", error);
+                }
+            }
+
+            renderCharts();
+
+        </script>
+        <script>
+            // function showSection(sectionId) {
+            //     const sections = document.querySelectorAll('.section');
+            //     sections.forEach(sec => sec.style.display = 'none');
+            //     document.getElementById(sectionId).style.display = 'block';
+            // }
+
+  function showSection(sectionId, clickedBtn) {
+    // Hide all sections
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(sec => sec.style.display = 'none');
+
+    // Show the selected section
+    document.getElementById(sectionId).style.display = 'block';
+
+    // Remove 'active' from all buttons
+    const buttons = document.querySelectorAll('.sidebar button, .sidebar a');
+    buttons.forEach(btn => btn.classList.remove('active'));
+
+    // Add 'active' to the clicked button
+    clickedBtn.classList.add('active');
+}
+            
+            function create() {
+                window.location.href = "admin.html";
+            }
+
+            function result() {
+                window.location.href = "result.html";
+            }
+        </script>
+
+</body>
+
+</html>

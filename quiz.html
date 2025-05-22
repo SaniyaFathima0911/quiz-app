@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Attend Quiz</title>
+  <meta charset="UTF-8" />
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+  <style>
+    /* body {
+      font-family: Arial, sans-serif;
+      background: #f7f5f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    #quiz-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+      width: 100%;
+      max-width: 600px;
+    }
+    .option {
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .option:hover {
+      background: #eee;
+    }
+    .selected {
+      background-color: #735d78;
+      color: white;
+    }
+    #start-btn, #next-btn, #submit-btn {
+      padding: 10px 20px;
+      background-color: #735d78;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    #start-btn:hover, #next-btn:hover, #submit-btn:hover {
+      background-color: #5e4762;
+    } */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f7f5f9;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Floating particles container */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: -1;
+      overflow: visible;
+    }
+
+    /* Each particle */
+    .particle {
+      position: absolute;
+      background: #735d78;
+      border-radius: 50%;
+      opacity: 0.7;
+      box-shadow: 0 0 10px #d1b3c4, 0 0 20px #735d78;
+      animation: floatUp 15s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0.7;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+
+      100% {
+        transform: translateY(-110vh) translateX(20vw);
+        opacity: 0;
+      }
+    }
+
+    /* Quiz container styling */
+    #quiz-container {
+      background: white;
+      padding: 2.5rem 3rem;
+      border-radius: 16px;
+      box-shadow:
+        0 10px 25px rgba(115, 93, 120, 0.25),
+        0 6px 15px rgba(209, 179, 196, 0.2);
+      width: 100%;
+      max-width: 600px;
+      color: #4b3b5c;
+      text-align: center;
+      z-index: 1;
+    }
+
+    /* Titles */
+    #quiz-title {
+      font-weight: 700;
+      font-size: 2rem;
+         margin-bottom: 16px;
+      color: #514055;
+      text-shadow: 0 1px 3px rgba(115, 93, 120, 0.4);
+    }
+
+    /* Input and buttons */
+    input#student-name {
+      width: 80%;
+      padding: 12px 15px;
+      border: 2px solid #d1b3c4;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.3s ease;
+      color: #735d78;
+      outline: none;
+    }
+
+    input#student-name:focus {
+      border-color: #735d78;
+      box-shadow: 0 0 8px #d1b3c4;
+    }
+
+    button#start-btn,
+    button#next-btn,
+    button#submit-btn {
+      padding: 12px 28px;
+      background-color: #6a4e77;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(115, 93, 120, 0.4);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    button#start-btn:hover,
+    button#next-btn:hover,
+    button#submit-btn:hover {
+      background-color: #5e4762;
+      box-shadow: 0 6px 15px rgba(115, 93, 120, 0.7);
+    }
+
+    button#start-btn:disabled,
+    button#next-btn:disabled,
+    button#submit-btn:disabled {
+      background-color: #d1b3c4;
+      cursor: not-allowed;
+      box-shadow: none;
+      color: #735d78;
+    }
+
+    /* Question text */
+    #question-text {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #5e4762;
+      text-shadow: 0 1px 1px rgba(115, 93, 120, 0.2);
+    }
+
+    /* Options styling */
+    .option {
+      padding: 12px 20px;
+      margin: 10px 0;
+      border: 2px solid #d1b3c4;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 500;
+      background-color: white;
+      color: #735d78;
+      box-shadow: 0 2px 8px rgba(209, 179, 196, 0.3);
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+      user-select: none;
+    }
+
+    .option:hover {
+      background-color: #d1b3c4;
+      border-color: #735d78;
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(115, 93, 120, 0.6);
+    }
+
+    .option.selected {
+      background-color: #735d78;
+      color: white;
+      border-color: #735d78;
+      box-shadow: 0 6px 20px rgba(115, 93, 120, 0.9);
+    }
+
+    /* Result section */
+    #result-section h3 {
+      color: #735d78;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 1px 2px rgba(115, 93, 120, 0.4);
+    }
+
+    #score-text {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #5e4762;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      #quiz-container {
+        padding: 2rem;
+      }
+
+      input#student-name {
+        width: 100%;
+      }
+
+      button#start-btn,
+      button#next-btn {
+        width: 100%;
+      }
+    }
+
+    /* body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: white;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: #735d78;
+      border-radius: 50%;
+      animation: floatUp linear infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(-100vh) scale(0.5);
+        opacity: 0;
+      }
+    } */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      background: #f3f0f5;
+      position: relative;
+      padding: 2rem;
+      overflow-x: hidden;
+    }
+
+    /* Wave container */
+    .wave-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100vw;
+      height: 170px;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    /* The wave SVG fills this container */
+    .wave {
+      position: absolute;
+      width: 200%;
+      height: 100%;
+      animation: waveMove 10s linear infinite;
+      fill: #67436f;
+      opacity: 0.4;
+    }
+
+    @keyframes waveMove {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wave-container">
+    <svg class="wave" viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,160 C480,320 960,0 1440,160 L1440,320 L0,320 Z"></path>
+    </svg>
+  </div>
+  <!-- <div class="particles">
+    <div class="particle" style="width:10px; height:10px; left:10vw; top:90vh; animation-delay: 0s;"></div>
+    <div class="particle" style="width:14px; height:14px; left:40vw; top:100vh; animation-delay: 3s;"></div>
+    <div class="particle" style="width:8px; height:8px; left:70vw; top:95vh; animation-delay: 5s;"></div>
+    <div class="particle" style="width:12px; height:12px; left:85vw; top:92vh; animation-delay: 2s;"></div>
+    <div class="particle" style="width:9px; height:9px; left:25vw; top:97vh; animation-delay: 7s;"></div>
+  </div> -->
+
+  <div id="quiz-container">
+    <h2 id="quiz-title">Loading quiz...</h2>
+    <div id="name-section">
+      <input type="text" id="student-name" placeholder="Enter your name" />
+      <button id="start-btn">Start Quiz</button>
+    </div>
+    <div id="question-section" style="display: none;">
+      <div id="question-text"></div>
+      <div id="options-container"></div>
+      <button id="next-btn">Next</button>
+    </div>
+    <div id="result-section" style="display: none;">
+      <h3>Quiz Completed!</h3>
+      <p id="score-text"></p>
+    </div>
+  </div>
+
+  <script>
+    // Your Firebase config (replace with your own!)
+    const firebaseConfig = {
+      apiKey: "AIzaSyC-SZclK5KRhwtorwsC9gnza0NSqeQA4ns",
+      authDomain: "quiz-app-31f43.firebaseapp.com",
+      projectId: "quiz-app-31f43",
+      storageBucket: "quiz-app-31f43.appspot.com",
+      messagingSenderId: "152648052750",
+      appId: "1:152648052750:web:be08810bd7a03367a84c5f"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const quizId = urlParams.get('quizId');
+
+    let quizData = null;
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let selectedAnswers = [];
+
+    const quizTitle = document.getElementById('quiz-title');
+    const nameSection = document.getElementById('name-section');
+    const startBtn = document.getElementById('start-btn');
+    const questionSection = document.getElementById('question-section');
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const nextBtn = document.getElementById('next-btn');
+    const resultSection = document.getElementById('result-section');
+    const scoreText = document.getElementById('score-text');
+
+    const studentNameInput = document.getElementById('student-name');
+
+    async function loadQuiz() {
+      if (!quizId) {
+        quizTitle.innerText = "Invalid quiz link";
+        return;
+      }
+
+      const doc = await db.collection("quizzes").doc(quizId).get();
+      if (!doc.exists) {
+        quizTitle.innerText = "Quiz not found!";
+        return;
+      }
+
+      quizData = doc.data();
+      quizTitle.innerText = quizData.title || "Untitled Quiz";
+    }
+
+    function showQuestion() {
+      const question = quizData.questions[currentQuestionIndex];
+      questionText.innerText = `Q${currentQuestionIndex + 1}: ${question.question}`;
+      optionsContainer.innerHTML = '';
+
+      question.options.forEach(option => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.innerText = option;
+        div.addEventListener('click', () => {
+          document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+          div.classList.add('selected');
+          selectedAnswers[currentQuestionIndex] = option;
+        });
+        optionsContainer.appendChild(div);
+      });
+    }
+
+    function saveResult(student, score) {
+      if (!student) student = "Anonymous"; // fallback if name somehow missing
+
+      db.collection("quizzes").doc(quizId).collection("results").add({
+        name: student,
+        score: score,
+        total: quizData.questions.length,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+
+    startBtn.addEventListener('click', () => {
+      const studentName = studentNameInput.value.trim();
+      if (!studentName) {
+        alert("Please enter your name.");
+        return;
+      }
+
+      nameSection.style.display = 'none';
+      questionSection.style.display = 'block';
+      showQuestion();
+    });
+
+    // nextBtn.addEventListener('click', () => {
+    //   if (!selectedAnswers[currentQuestionIndex]) {
+    //     alert("Please select an answer before continuing.");
+    //     return;
+    //   }
+
+    //   const correctAnswer = quizData.questions[currentQuestionIndex].correctAnswer;
+    //   if (selectedAnswers[currentQuestionIndex] === correctAnswer) {
+    //     score++;
+    //   }
+
+    //   currentQuestionIndex++;
+
+    //   if (currentQuestionIndex < quizData.questions.length) {
+    //     showQuestion();
+    //   } else {
+    //     questionSection.style.display = 'none';
+    //     resultSection.style.display = 'block';
+    //     // scoreText.innerText = `You scored ${score} out of ${quizData.questions.length}`;
+    //     scoreText.innerText = `${studentNameInput.value.trim()}, you scored ${score} out of ${quizData.questions.length}`;
+    //     saveResult(studentNameInput.value.trim(), score);
+    //   }
+    // });
+    nextBtn.addEventListener('click', () => {
+      if (!selectedAnswers[currentQuestionIndex]) {
+        alert("Please select an answer before continuing.");
+        return;
+      }
+
+      const correctAnswer = quizData.questions[currentQuestionIndex].correctAnswer;
+      if (selectedAnswers[currentQuestionIndex] === correctAnswer) {
+        score++;
+      }
+
+      currentQuestionIndex++;
+
+      if (currentQuestionIndex < quizData.questions.length) {
+        showQuestion();
+      } else {
+        questionSection.style.display = 'none';
+        resultSection.style.display = 'block';
+        const studentName = studentNameInput.value.trim();
+        scoreText.innerText = `${studentName}, you scored ${score} out of ${quizData.questions.length}`;
+        saveResult(studentName, score);
+      }
+    });
+
+    loadQuiz();
+  </script>
+
+</body>
+
+</html>
