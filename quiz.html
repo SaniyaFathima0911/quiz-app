@@ -277,6 +277,29 @@
       width: 25%;
     }
 
+    .buttonn {
+      text-align: center;
+      display: inline-block;
+      padding: 12px 28px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #735d78, #a583a6);
+      box-shadow: 0 6px 15px rgba(115, 93, 120, 0.45);
+      transition: background-position 0.5s ease, box-shadow 0.4s ease;
+      background-size: 200% 200%;
+      background-position: 0% 50%;
+      user-select: none;
+      margin-top: 24px;
+    }
+
+    .buttonn:hover {
+      background-position: 100% 50%;
+      box-shadow: 0 8px 25px rgba(115, 93, 120, 0.7);
+    }
   </style>
 </head>
 
@@ -307,6 +330,7 @@
 
   <div id="result-section" style="display:none;">
     <p id="score-text"></p>
+    <button class="buttonn" onclick="mainPage()">Back</button>
     <!-- <button id="retake-btn">Retake</button> -->
   </div>
 
@@ -348,6 +372,9 @@
         console.error("Error setting auth persistence:", e);
       }
     })();
+    window.mainPage = function () {
+      window.location.href = "index.html";
+    };
 
     window.addEventListener("DOMContentLoaded", () => {
       const quizTitle = document.getElementById("quiz-title");
@@ -448,7 +475,7 @@
 
             document.querySelectorAll(".option-btn").forEach(b => b.disabled = true);
             document.querySelectorAll(".option-btn").forEach((btn) => {
-              btn.onclick = null; 
+              btn.onclick = null;
             });
 
             const correctIndex = question.correctAnswerIndex;

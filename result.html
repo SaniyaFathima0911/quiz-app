@@ -22,17 +22,18 @@
       background: #f8f5fa;
       color: #3a2f3f;
     }
+
     body::before {
-  content: '';
-  position: absolute;
-  top: 20%;
-  left: -10%;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(#d1b3c4, transparent);
-  z-index: -1;
-  filter: blur(100px);
-}
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: -10%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(#d1b3c4, transparent);
+      z-index: -1;
+      filter: blur(100px);
+    }
 
     .sidebar {
       width: 20vw;
@@ -108,30 +109,34 @@
       border-left: 6px solid #735d78;
       transition: box-shadow 0.3s ease;
     }
-    .quiz-card {
-  animation: fadeInUp 0.6s ease forwards;
-}
-.quiz-card {
-   border: 1px solid #d0b3d1a6;
-  background: linear-gradient(to bottom right, #fdf5f9, #f7eaf3);
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
-}
-.quiz-card:hover {
-  transform: scale(1.03);
-}
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+    .quiz-card {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .quiz-card {
+      border: 1px solid #d0b3d1a6;
+      background: linear-gradient(to bottom right, #fdf5f9, #f7eaf3);
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .quiz-card:hover {
+      transform: scale(1.03);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
     .quiz-card:hover {
       box-shadow: 0 12px 24px rgba(115, 93, 120, 0.25);
@@ -395,7 +400,7 @@
         console.log("User is logged in:", user.email);
         const userDisplay = document.getElementById("userInfo");
         if (userDisplay) userDisplay.textContent = `Logged in as ${user.displayName || user.email}`;
-        loadResults(user.uid); 
+        loadResults(user.uid);
       }
     });
 
