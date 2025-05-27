@@ -293,12 +293,30 @@
       background-size: 200% 200%;
       background-position: 0% 50%;
       user-select: none;
-      margin-top: 24px;
+      margin: 24px 8px;
     }
 
     .buttonn:hover {
       background-position: 100% 50%;
       box-shadow: 0 8px 25px rgba(115, 93, 120, 0.7);
+    }
+    #retake-btn{
+        text-align: center;
+      display: inline-block;
+      padding: 12px 28px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #735d78, #a583a6);
+      box-shadow: 0 6px 15px rgba(115, 93, 120, 0.45);
+      transition: background-position 0.5s ease, box-shadow 0.4s ease;
+      background-size: 200% 200%;
+      background-position: 0% 50%;
+      user-select: none;
+      margin: 24px 8px;
     }
   </style>
 </head>
@@ -331,7 +349,7 @@
   <div id="result-section" style="display:none;">
     <p id="score-text"></p>
     <button class="buttonn" onclick="mainPage()">Back</button>
-    <!-- <button id="retake-btn">Retake</button> -->
+    <button id="retake-btn">Retake</button>
   </div>
 
   <script type="module">
