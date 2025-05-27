@@ -4,8 +4,7 @@
 <head>
   <title>Create Quiz – Admin</title>
   <meta charset="UTF-8" />
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
   <style>
     * {
       box-sizing: border-box;
@@ -33,21 +32,23 @@
     }
 
     /* Forms container */
-   #quiz-form, #question-form, #preview {
-    background: white;
-    padding: 2rem 2.5rem;
-    margin-bottom: 1.8rem;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(115, 93, 120, 0.15);
-    width: 100%;
-    width: 800px;
-    transition: box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-    align-items: flex-start;
-     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+    #quiz-form,
+    #question-form,
+    #preview {
+      background: white;
+      padding: 2rem 2.5rem;
+      margin-bottom: 1.8rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(115, 93, 120, 0.15);
+      width: 100%;
+      width: 800px;
+      transition: box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      align-items: flex-start;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
     #quiz-form:hover,
     #question-form:hover,
@@ -55,13 +56,13 @@
       box-shadow: 0 14px 35px rgba(115, 93, 120, 0.3);
     }
 
-   label {
-    font-weight: 600;
-    color: #5a4762;
-    display: block;
-    /* margin-bottom: 6px; */
-    font-size: 22px;
-}
+    label {
+      font-weight: 600;
+      color: #5a4762;
+      display: block;
+      /* margin-bottom: 6px; */
+      font-size: 22px;
+    }
 
     input,
     textarea,
@@ -78,7 +79,7 @@
       font-weight: 500;
       box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
       cursor: pointer;
-       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     input:focus,
@@ -199,7 +200,7 @@
       width: 500px;
       height: 500px;
       /* background: #735d78; */
-          background: #874f71;
+      background: #874f71;
       bottom: -150px;
       right: -150px;
       animation-delay: 5s;
@@ -230,17 +231,24 @@
       justify-content: space-between;
       width: 100%;
     }
+
     #question-form h3 {
-    font-size: 22px;
-    color: #5a4762;
-}
-div#question-list {
-    width: 100%;
-}
+      font-size: 22px;
+      color: #5a4762;
+    }
+
+    div#question-list {
+      width: 100%;
+    }
   </style>
 </head>
 
 <body>
+  <div style="display: flex; justify-content: space-between;">
+    <!-- <span id="userInfo" style="font-weight: bold;"></span>
+  <button id="logoutBtn">Logout</button> -->
+  </div>
+
   <div class="animated-blobs">
     <div class="blob blob1"></div>
     <div class="blob blob2"></div>
@@ -279,104 +287,159 @@ div#question-list {
     </div>
   </div>
 
-  <div id="quiz-link"></div>
+  <div id="quiz-link" style="display:none;"></div>
 
-  <script>
-    // Firebase Config (replace with your own)
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut,
+      setPersistence,
+      browserLocalPersistence
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyC-SZclK5KRhwtorwsC9gnza0NSqeQA4ns",
       authDomain: "quiz-app-31f43.firebaseapp.com",
       projectId: "quiz-app-31f43",
       storageBucket: "quiz-app-31f43.appspot.com",
       messagingSenderId: "152648052750",
-      appId: "1:152648052750:web:be08810bd7a03367a84c5f"
+      appId: "1:152648052750:web:be08810bd7a03367a84c5f",
+      measurementId: "G-H4LN1Y0HWE"
     };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
 
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
     let questions = [];
 
-    function addQuestion() {
+    await setPersistence(auth, browserLocalPersistence);
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+      } else {
+        currentUser = user;
+        console.log("User is logged in:", user.email);
+
+        const userDisplay = document.getElementById("userInfo");
+        if (userDisplay) userDisplay.textContent = `Logged in as ${user.displayName || user.email}`;
+      }
+    });
+
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", () => {
+        signOut(auth)
+          .then(() => {
+            console.log("User signed out");
+            window.location.href = "login.html";
+          })
+          .catch((error) => {
+            console.error("Sign out error:", error);
+          });
+      });
+    }
+
+    window.addQuestion = function () {
       const questionText = document.getElementById("question").value.trim();
-      const option1 = document.getElementById("option1").value.trim();
-      const option2 = document.getElementById("option2").value.trim();
-      const option3 = document.getElementById("option3").value.trim();
-      const option4 = document.getElementById("option4").value.trim();
+      const opt1 = document.getElementById("option1").value.trim();
+      const opt2 = document.getElementById("option2").value.trim();
+      const opt3 = document.getElementById("option3").value.trim();
+      const opt4 = document.getElementById("option4").value.trim();
       const correct = document.getElementById("correct-answer").value;
 
-      if (!questionText || !option1 || !option2 || !option3 || !option4 || !correct) {
-        alert("Please fill all fields.");
+      if (!questionText || !opt1 || !opt2 || !opt3 || !opt4 || !correct) {
+        alert("Please fill in all question fields and select the correct answer.");
         return;
       }
 
-      const options = [option1, option2, option3, option4];
-      const correctAnswer = {
-        option1: option1,
-        option2: option2,
-        option3: option3,
-        option4: option4
-      }[correct];
+      const correctIndex = ["option1", "option2", "option3", "option4"].indexOf(correct);
 
       questions.push({
         question: questionText,
-        options: options,
-        correctAnswer: correctAnswer
+        options: [opt1, opt2, opt3, opt4],
+        correctAnswerIndex: correctIndex
       });
 
-      renderQuestions();
-      clearForm();
-    }
-
-    function clearForm() {
       document.getElementById("question").value = "";
       document.getElementById("option1").value = "";
       document.getElementById("option2").value = "";
       document.getElementById("option3").value = "";
       document.getElementById("option4").value = "";
       document.getElementById("correct-answer").value = "";
-    }
 
-    function renderQuestions() {
+      updatePreview();
+    };
+
+    window.updatePreview = function () {
       const list = document.getElementById("question-list");
       list.innerHTML = "";
-      questions.forEach((q, index) => {
+
+      questions.forEach((q, idx) => {
         const div = document.createElement("div");
         div.className = "question-preview";
-        div.innerHTML = `
-          <strong>Q${index + 1}:</strong> ${q.question}<br>
-          <em>Options:</em> ${q.options.join(", ")}<br>
-          <em>Correct:</em> ${q.correctAnswer}
-        `;
+
+        const correctAnswerText = q.options[q.correctAnswerIndex] || "N/A";
+        div.textContent = `${idx + 1}. ${q.question} (Correct answer: ${correctAnswerText})`;
+
         list.appendChild(div);
       });
-    }
+    };
 
-    async function saveQuiz() {
-      const title = document.getElementById("quiz-title").value.trim();
-      if (!title || questions.length === 0) {
-        alert("Please enter quiz title and at least one question.");
+    window.saveQuiz = async function () {
+      const quizTitle = document.getElementById("quiz-title").value.trim();
+
+      if (!quizTitle) {
+        alert("Please enter a quiz title.");
         return;
       }
 
-      const docRef = await db.collection("quizzes").add({
-        title: title,
-        questions: questions,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
+      if (questions.length === 0) {
+        alert("Please add at least one question.");
+        return;
+      }
 
-      const quizId = docRef.id;
-      // const link = `${window.location.origin}/quiz.html?quizId=${quizId}`;
-      // document.getElementById("quiz-link").innerHTML = `✅ Quiz saved! Share this link:<br><a href="${link}" target="_blank">${link}</a>`;
-      const link = `${window.location.origin}/quiz.html?quizId=${quizId}`;
-      localStorage.setItem("quizLink", link);  // Save to localStorage
-      window.location.href = "link.html";     // Redirect to another page
-    }
+      if (!currentUser) {
+        alert("You must be logged in to save a quiz.");
+        return;
+      }
 
-    function mainPage() {
+      try {
+        const quizDoc = await addDoc(collection(db, "quizzes"), {
+          userId: currentUser.uid,
+          title: quizTitle,
+          questions: questions,
+          createdAt: serverTimestamp()
+        });
+
+        const quizId = quizDoc.id;
+        window.location.href = `link.html?id=${quizId}`;
+
+        document.getElementById("quiz-title").value = "";
+        questions = [];
+        updatePreview();
+
+      } catch (error) {
+        console.error("Error saving quiz:", error);
+        alert("Failed to save quiz. Please try again.");
+      }
+    };
+
+    window.mainPage = function () {
       window.location.href = "index.html";
-    }
-
+    };
   </script>
+
 </body>
 
 </html>

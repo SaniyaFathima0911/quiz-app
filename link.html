@@ -4,6 +4,7 @@
 <head>
   <title>Quiz Link</title>
   <meta charset="UTF-8" />
+
   <style>
     body {
      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -119,43 +120,54 @@
   </div>
 
   <div class="link-box">
-    <h2>Quiz Created!</h2>
-    <p>Share this quiz link:</p>
-    <div class="link-container">
-      <p id="quiz-link"></p>
-      <button onclick="copyLink()">Copy Link</button>
-      <div id="copy-success" class="copy-success">Copied!</div>
-    </div>
-    <button onclick="goBack()" style="margin-top: 20px;">Create Another Quiz</button>
+  <h2>Quiz Created!</h2>
+  <p>Share this quiz link:</p>
+  <div class="link-container">
+    <p id="quiz-link"></p>
+    <button onclick="copyLink()">Copy Link</button>
+    <div id="copy-success" class="copy-success" style="display:none;">Copied!</div>
   </div>
+  <button onclick="goBack()" style="margin-top: 20px;">Create Another Quiz</button>
+</div>
 
-  <script>
-    const link = localStorage.getItem("quizLink");
-    const quizLinkElem = document.getElementById("quiz-link");
-    const successMsg = document.getElementById("copy-success");
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const quizId = params.get("id");
 
+  const quizLinkElem = document.getElementById("quiz-link");
+  const successMsg = document.getElementById("copy-success");
+
+  if (quizId) {
+    const link = `${window.location.origin}/quiz.html?id=${quizId}`;
     quizLinkElem.innerHTML = `<a href="${link}" target="_blank">${link}</a>`;
+    localStorage.setItem("quizLink", link);
+  } else {
+    quizLinkElem.textContent = "Quiz link not available. Please try again.";
+  }
 
-    function copyLink() {
-      const tempInput = document.createElement("input");
-      tempInput.value = link;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      tempInput.setSelectionRange(0, 99999);
-      document.execCommand("copy");
-      document.body.removeChild(tempInput);
+  function copyLink() {
+    const link = localStorage.getItem("quizLink");
+    if (!link) return;
 
-      successMsg.style.display = "block";
-      setTimeout(() => {
-        successMsg.style.display = "none";
-      }, 2000);
-    }
+    const tempInput = document.createElement("input");
+    tempInput.value = link;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
 
-    function goBack() {
-      localStorage.removeItem("quizLink");
-      window.location.href = "admin.html";
-    }
-  </script>
+    successMsg.style.display = "block";
+    setTimeout(() => {
+      successMsg.style.display = "none";
+    }, 2000);
+  }
+
+  function goBack() {
+    localStorage.removeItem("quizLink");
+    window.location.href = "admin.html";
+  }
+</script>
+
 
 </body>
 

@@ -4,231 +4,267 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <title>Quiz Results Dashboard</title>
   <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    list-style: none;
-    text-decoration: none;
-  }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      list-style: none;
+      text-decoration: none;
+    }
 
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f8f5fa; /* very light lavender */
-    color: #3a2f3f; /* dark muted purple/gray for text */
-  }
-
-  .sidebar {
-    width: 20vw;
-    background: #f2e9f3; /* soft light purple */
-    box-shadow: 2px 0 8px rgba(115, 93, 120, 0.15);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-  }
-
-  .sidebar h2 {
-    color: #735d78;
-    font-size: 24px;
-    margin-bottom: 30px;
-  }
-
-  .sidebar nav a {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: #5a4961;
-    margin-bottom: 16px;
-    padding: 8px 10px;
-    border-radius: 8px;
-    transition: background 0.3s, color 0.3s;
-    gap: 6px;
-  }
-
-  .sidebar nav a:hover {
-    background: #d8c9db;
-    color: #3e2c46;
-  }
-
-  .sidebar nav a span {
-    margin-left: 10px;
-  }
-
-  .upgrade {
-    background: #735d78;
-    padding: 12px;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: 600;
-    cursor: pointer;
-    color: white;
-    border-bottom: 4px solid #594462;
-    margin-bottom: 14px;
-    box-shadow: 0 4px 8px rgba(115, 93, 120, 0.3);
-    transition: background 0.3s ease;
-  }
-
-  .upgrade:hover {
-    background: #594462;
-  }
-
-  .some h2 {
-    color: #5d4e60;
-    font-weight: 700;
-    font-size: 32px;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f8f5fa;
+      color: #3a2f3f;
+    }
+    body::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: -10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(#d1b3c4, transparent);
+  z-index: -1;
+  filter: blur(100px);
 }
 
-  .quiz-card {
-    background: #fff;
-    padding: 24px 28px;
-    margin: 20px auto;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(115, 93, 120, 0.12);
-    max-width: 90%;
-    border-left: 6px solid #735d78;
-    transition: box-shadow 0.3s ease;
-  }
+    .sidebar {
+      width: 20vw;
+      background: #f2e9f3;
+      box-shadow: 2px 0 8px rgba(115, 93, 120, 0.15);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
 
-  .quiz-card:hover {
-    box-shadow: 0 12px 24px rgba(115, 93, 120, 0.25);
-  }
+    .sidebar h2 {
+      color: #735d78;
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
 
-  .quiz-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+    .sidebar nav a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #5a4961;
+      margin-bottom: 16px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      transition: background 0.3s, color 0.3s;
+      gap: 6px;
+    }
 
-  .quiz-header h3 {
-    color: #5a3e6e;
-    font-weight: 700;
-    font-size: 22px;
-  }
+    .sidebar nav a:hover {
+      background: #d8c9db;
+      color: #3e2c46;
+    }
 
-  .summary {
-    margin-top: 12px;
-    font-size: 15px;
-    color: #5a4961;
-    font-weight: 500;
-  }
+    .sidebar nav a span {
+      margin-left: 10px;
+    }
 
-  .expand-btn {
-    background: #735d78;
-    color: white;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    box-shadow: 0 4px 8px rgba(115, 93, 120, 0.3);
-    transition: background 0.3s ease;
-  }
+    .upgrade {
+      background: #735d78;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      cursor: pointer;
+      color: white;
+      border-bottom: 4px solid #594462;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 8px rgba(115, 93, 120, 0.3);
+      transition: background 0.3s ease;
+    }
 
-  .expand-btn:hover {
-    background: #594462;
-  }
+    .upgrade:hover {
+      background: #594462;
+    }
 
-  .questions {
-    margin-top: 18px;
-    display: none;
-  }
+    .some h2 {
+      color: #503d54;
+      font-weight: 700;
+      font-size: 32px;
+    }
 
-  .question {
-    margin: 12px 0;
-    padding: 14px 18px;
-    background: #f3eaf7;
-    border-left: 6px solid #735d78;
-    border-radius: 8px;
-    color: #4a3b57;
-    font-size: 15px;
-  }
+    .quiz-card {
+      background: #fff;
+      padding: 24px 28px;
+      margin: 20px auto;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(115, 93, 120, 0.12);
+      max-width: 90%;
+      border-left: 6px solid #735d78;
+      transition: box-shadow 0.3s ease;
+    }
+    .quiz-card {
+  animation: fadeInUp 0.6s ease forwards;
+}
+.quiz-card {
+   border: 1px solid #d0b3d1a6;
+  background: linear-gradient(to bottom right, #fdf5f9, #f7eaf3);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+.quiz-card:hover {
+  transform: scale(1.03);
+}
 
-  .correct {
-    color: #4a7a45; /* darker green */
-    font-weight: 600;
-    margin-top: 4px;
-    display: inline-block;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
-
-  .student-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 18px;
-    font-size: 14px;
-    color: #5a4961;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
 
-  .student-table th,
-  .student-table td {
-    border: 1px solid #d4c6db;
-    padding: 10px 14px;
-    text-align: center;
-  }
+    .quiz-card:hover {
+      box-shadow: 0 12px 24px rgba(115, 93, 120, 0.25);
+    }
 
-  .student-table th {
-    background-color: #e8dff1;
-    font-weight: 700;
-  }
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-  .student-cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 18px;
-    margin-top: 20px;
-    justify-content: flex-start;
-  }
+    .quiz-header h3 {
+      color: #5a3e6e;
+      font-weight: 700;
+      font-size: 22px;
+    }
 
-  .student-card {
-    background: #f6f0f8;
-    border-left: 6px solid #735d78;
-    border-radius: 12px;
-    padding: 16px 20px;
-    width: 210px;
-    box-shadow: 0 4px 12px rgba(115, 93, 120, 0.15);
-    text-align: center;
-    font-size: 14px;
-    transition: background 0.3s ease;
-  }
+    .summary {
+      margin-top: 12px;
+      font-size: 15px;
+      color: #5a4961;
+      font-weight: 500;
+    }
 
-  .student-card:hover {
-    background: #e9dff3;
-  }
+    .expand-btn {
+      background: #735d78;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 4px 8px rgba(115, 93, 120, 0.3);
+      transition: background 0.3s ease;
+    }
 
-  .student-name {
-    font-weight: 700;
-    color: #5a3e6e;
-    margin-bottom: 8px;
-  }
+    .expand-btn:hover {
+      background: #594462;
+    }
 
-  .student-score {
-    font-size: 17px;
-    color: #735d78;
-    font-weight: 700;
-  }
+    .questions {
+      margin-top: 18px;
+      display: none;
+    }
 
-  .student-percent {
-    font-size: 13px;
-    color: #8a7399;
-    margin-top: 4px;
-  }
+    .question {
+      margin: 12px 0;
+      padding: 14px 18px;
+      background: #f3eaf7;
+      border-left: 6px solid #735d78;
+      border-radius: 8px;
+      color: #4a3b57;
+      font-size: 15px;
+    }
 
-  .whole {
-    display: flex;
-  }
+    .correct {
+      color: #4a7a45;
+      font-weight: 600;
+      margin-top: 4px;
+      display: inline-block;
+    }
 
-  img {
-    width: 160px;
-    margin-bottom: 20px;
-  }
+    .student-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+      font-size: 14px;
+      color: #5a4961;
+    }
 
-  .some {
+    .student-table th,
+    .student-table td {
+      border: 1px solid #d4c6db;
+      padding: 10px 14px;
+      text-align: center;
+    }
+
+    .student-table th {
+      background-color: #e8dff1;
+      font-weight: 700;
+    }
+
+    .student-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 20px;
+      justify-content: flex-start;
+    }
+
+    .student-card {
+      background: #f6f0f8;
+      border-left: 6px solid #735d78;
+      border-radius: 12px;
+      padding: 16px 20px;
+      width: 210px;
+      box-shadow: 0 4px 12px rgba(115, 93, 120, 0.15);
+      text-align: center;
+      font-size: 14px;
+      transition: background 0.3s ease;
+    }
+
+    .student-card:hover {
+      background: #e9dff3;
+    }
+
+    .student-name {
+      font-weight: 700;
+      color: #5a3e6e;
+      margin-bottom: 8px;
+    }
+
+    .student-score {
+      font-size: 17px;
+      color: #735d78;
+      font-weight: 700;
+    }
+
+    .student-percent {
+      font-size: 13px;
+      color: #8a7399;
+      margin-top: 4px;
+    }
+
+    .whole {
+      display: flex;
+    }
+
+    img {
+      width: 160px;
+      margin-bottom: 20px;
+    }
+
+    .some {
       width: 90%;
       margin: 30px auto;
       display: flex;
@@ -236,237 +272,224 @@
       justify-content: space-between;
       align-items: center;
     }
+
     div#results-container {
-    width: 95%;
-}
-.right {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 95%;
-    padding: 0px 5%;
-}
-.right button{
-   padding: 12px 28px;
+      width: 95%;
+    }
+
+    .right {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 95%;
+      padding: 0px 5%;
+    }
+
+    .right button {
+      padding: 12px 28px;
       font-size: 1.1rem;
       font-weight: 700;
       color: white;
       border: none;
       border-radius: 25px;
       cursor: pointer;
-      background: linear-gradient(135deg, #735d78, #a583a6);
+      background: linear-gradient(135deg, #503d54, #a583a6);
       box-shadow: 0 6px 15px rgba(115, 93, 120, 0.45);
       transition: background-position 0.5s ease, box-shadow 0.4s ease;
       background-size: 200% 200%;
       background-position: 0% 50%;
-}
+    }
 
 
- .student-card:hover {
-    background: #e9dbea;
-    transform: translateY(-4px);
-  }
+    .student-card:hover {
+      background: #e9dbea;
+      transform: translateY(-4px);
+    }
 
-  .student-name {
-    font-weight: 700;
-    color: #3e2c46;
-    margin-bottom: 8px;
-  }
+    .student-name {
+      font-weight: 700;
+      color: #3e2c46;
+      margin-bottom: 8px;
+    }
 
-  .student-score {
-    font-size: 18px;
-    color: #735d78;
-    font-weight: bold;
-    margin-bottom: 6px;
-  }
+    .student-score {
+      font-size: 18px;
+      color: #735d78;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
 
-  .student-percent {
-    font-size: 13px;
-    color: #6d5a74;
-  }
+    .student-percent {
+      font-size: 13px;
+      color: #6d5a74;
+    }
 
-  .whole {
-    display: flex;
-  }
+    .whole {
+      display: flex;
+    }
 
-  img {
-    width: 160px;
-    margin-bottom: 20px;
-  }
+    img {
+      width: 160px;
+      margin-bottom: 20px;
+    }
 
-  .some {
-    width: 100%;
-  }
-</style>
+    .some {
+      width: 100%;
+    }
+  </style>
 
 </head>
 
 <body>
-  <!-- <div class="whole"> -->
-    <!-- <div class="sidebar">
-      <div>
-        <img src="images/quiz.png" alt="">
-        <div class="upgrade"><a href="admin.html" style="color: white;"><i class="fa-solid fa-plus"
-              style="color: #ffffff;padding-right: 4px;"></i>Create Quiz</a>
-        </div>
-        <nav>
-          <ul>
-            <li><a href="index.html"><i class="fa-regular fa-file" style="color: #000000;"></i>Reports</a>
-            </li>
-            <li><a href="admin.html"><i class="fa-solid fa-plus" style="color: #000000;"></i>Create</a></li>
-            <li><a href="result.html"><i class="fa-solid fa-list" style="color: #000000;"></i>Library</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-       <div id="auth-buttons" style="margin-top: 20px;">
-        <button id="loginSignupBtn"
-          style="padding: 10px; width: 100%; background-color: rgb(3 15 64); color: white; border: none; border-radius: 6px; cursor: pointer;">
-          Login / Signup
-        </button>
-        <button id="logoutBtn"
-          style="padding: 10px; width: 100%; background-color: rgb(93 47 116); color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; display: none;">
-          Logout
-        </button>
-      </div> 
-      <button id="auth-btn"></button>
-    </div> -->
-    <div class="some">
-      <div class="right">
+  <div style="display: flex; justify-content: space-between;">
+    <!-- <span id="userInfo" style="font-weight: bold;"></span>
+    <button id="logoutBtn">Logout</button> -->
+  </div>
+
+  <div class="some">
+    <div class="right">
       <h2>Results</h2>
       <button onclick="mainPage()">Back</button>
-      </div>
-      <div id="results-container"></div>
     </div>
-  <!-- </div> -->
+    <div id="results-container"></div>
+  </div>
 
-  <script src="auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      setPersistence,
+      browserLocalPersistence,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      query,
+      where
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyC-SZclK5KRhwtorwsC9gnza0NSqeQA4ns",
       authDomain: "quiz-app-31f43.firebaseapp.com",
       projectId: "quiz-app-31f43",
-      storageBucket: "quiz-app-31f43.firebasestorage.app",
+      storageBucket: "quiz-app-31f43.appspot.com",
       messagingSenderId: "152648052750",
       appId: "1:152648052750:web:be08810bd7a03367a84c5f",
       measurementId: "G-H4LN1Y0HWE"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-    async function loadResults() {
-      const quizzesSnapshot = await db.collection("quizzes").get();
+    await setPersistence(auth, browserLocalPersistence);
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+      } else {
+        console.log("User is logged in:", user.email);
+        const userDisplay = document.getElementById("userInfo");
+        if (userDisplay) userDisplay.textContent = `Logged in as ${user.displayName || user.email}`;
+        loadResults(user.uid); 
+      }
+    });
+
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", () => {
+        signOut(auth)
+          .then(() => {
+            console.log("User signed out");
+            window.location.href = "login.html";
+          })
+          .catch((error) => {
+            console.error("Sign out error:", error);
+          });
+      });
+    }
+
+    async function loadResults(userId) {
+      const quizzesSnapshot = await getDocs(collection(db, "quizzes"));
       const container = document.getElementById("results-container");
+      container.innerHTML = "";
 
       for (const quizDoc of quizzesSnapshot.docs) {
         const quiz = quizDoc.data();
         const resultDiv = document.createElement("div");
         resultDiv.className = "quiz-card";
 
-        // Fetch student results (assume in subcollection "results")
-        const resultsSnap = await db.collection("quizzes").doc(quizDoc.id).collection("results").get();
+        const resultsRef = collection(db, "quizzes", quizDoc.id, "results");
+        const q = query(resultsRef, where("userId", "==", userId));
+        const resultsSnap = await getDocs(q);
         const total = resultsSnap.size;
+        if (total === 0) continue;
 
         let totalScore = 0;
-        // let studentsHTML = '<table class="student-table"><tr><th>Student</th><th>Score</th><th>Percentage</th></tr>';
-        // resultsSnap.forEach(doc => {
-        //   const d = doc.data();
-        //   totalScore += d.score || 0;
-        //   const percent = ((d.score / quiz.questions.length) * 100).toFixed(1);
-        //   studentsHTML += `<tr><td>${d.name || 'Anonymous'}</td><td>${d.score}/${quiz.questions.length}</td><td>${percent}%</td></tr>`;
-        // });
-        // studentsHTML += '</table>';
         let studentsHTML = '<div class="student-cards">';
-        resultsSnap.forEach(doc => {
-          const d = doc.data();
+        resultsSnap.forEach(docSnap => {
+          const d = docSnap.data();
           totalScore += d.score || 0;
           const percent = ((d.score / quiz.questions.length) * 100).toFixed(1);
+
           studentsHTML += `
-    <div class="student-card">
-      <div class="student-name">${d.name || 'Anonymous'}</div>
-      <div class="student-score">${d.score}/${quiz.questions.length}</div>
-      <div class="student-percent">${percent}%</div>
-    </div>`;
+          <div class="student-card">
+            <div class="student-name">${d.studentName || 'Anonymous'}</div>
+            <div class="student-score">${d.score}/${quiz.questions.length}</div>
+            <div class="student-percent">${percent}%</div>
+          </div>`;
         });
         studentsHTML += '</div>';
 
-
         const accuracy = total ? (totalScore / (total * quiz.questions.length) * 100).toFixed(1) : 0;
 
-        // Group questions by category
-        const questionsByCategory = {};
+        resultDiv.innerHTML = `
+        <div class="quiz-header">
+          <h3>${quiz.title || 'Untitled Quiz'}</h3>
+          <button class="expand-btn" onclick="toggleQuestions(this)">View Questions</button>
+        </div>
+        <div class="summary">
+          <p><strong>Attempts:</strong> ${total} | <strong>Accuracy:</strong> ${accuracy}%</p>
+        </div>
+       <div class="questions" style="display:none;">
+  ${quiz.questions.map((q, idx) => {
+          const correctIndex = q.correctAnswerIndex;
+          const correctLetter = String.fromCharCode(65 + correctIndex); // A, B, C...
+          const correctText = q.options?.[correctIndex] || "N/A";
+          return `
+      <div class="question">
+        Q${idx + 1}: ${q.question}
+        <div class="correct">Correct: ${correctLetter}. ${correctText}</div>
+      </div>`;
+        }).join("")}
+</div>
 
-        // quiz.questions.forEach((question, i) => {
-        //    console.log("Question data:", question); 
-        //   const category = question.category || "Uncategorized";
-        //   if (!questionsByCategory[category]) questionsByCategory[category] = [];
-        //   questionsByCategory[category].push({
-        //     index: i + 1,
-        //     text: question.questionText,
-        //     correct: question.correctAnswer
-        //   });
-        // });
-        const questions = quiz.questions || [];
-
-        questions.forEach((question, i) => {
-          console.log('Question:', question); // debug
-          const category = question.category || "Uncategorized";
-          if (!questionsByCategory[category]) questionsByCategory[category] = [];
-          questionsByCategory[category].push({
-            index: i + 1,
-            text: question.questionText || question.question || "Question text missing",
-            correct: question.correctAnswer || question.answer || "Correct answer missing"
-          });
-        });
-
-
-        let categoryHTML = "";
-        for (const [category, questions] of Object.entries(questionsByCategory)) {
-          categoryHTML +=
-            `${questions.map(q =>
-              `<div class="question">
-                <strong>Q${q.index}:</strong> ${q.text}<br>
-                <span class="correct">Correct: ${q.correct}</span>
-              </div>`
-            ).join("")}`;
-        }
-
-        resultDiv.innerHTML =
-          `<div class="quiz-header">
-            <h3>${quiz.title}</h3>
-            <button class="expand-btn" onclick="toggleQuestions(this)">View Questions</button>
-          </div>
-          <div class="summary">
-         
-            <strong>Participants:</strong> ${total} |
-            <strong>Accuracy:</strong> ${accuracy}%
-          </div>
-          ${studentsHTML}
-          <div class="questions">${categoryHTML}</div>`;
+        ${studentsHTML}
+      `;
 
         container.appendChild(resultDiv);
       }
     }
 
-    function toggleQuestions(btn) {
-      const card = btn.closest('.quiz-card');
-      const qDiv = card.querySelector('.questions');
-      const isVisible = qDiv.style.display === "block";
-      qDiv.style.display = isVisible ? "none" : "block";
-      btn.textContent = isVisible ? "View Questions" : "Hide Questions";
-    }
+    window.toggleQuestions = function (btn) {
+      const questionsDiv = btn.closest(".quiz-card").querySelector(".questions");
+      if (questionsDiv.style.display === "none" || !questionsDiv.style.display) {
+        questionsDiv.style.display = "block";
+        btn.innerText = "Hide Questions";
+      } else {
+        questionsDiv.style.display = "none";
+        btn.innerText = "View Questions";
+      }
+    };
 
-    function mainPage() {
-      window.location.href = "index.html"
-    }
-
-    loadResults();
+    window.mainPage = function () {
+      window.location.href = "index.html";
+    };
   </script>
+
 </body>
 
 </html>

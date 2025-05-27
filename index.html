@@ -19,9 +19,11 @@
             list-style: none;
             text-decoration: none;
         }
+
         .sidebar {
             width: 20vw;
-            background: #e7e2e5;
+            /* background: #e7e2e5; */
+            background-color: #9976aa3b;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
             padding: 20px;
             display: flex;
@@ -54,35 +56,35 @@
             transition: background 0.2s;
             gap: 6px;
             border: none;
-            background: #e7e2e5;
+            background: #e7dfeb;
             font-size: 17px;
         }
 
         .sidebar nav button:hover {
-    color: #453548;
-    font-weight: bold;
-    cursor: pointer;
-}
+            color: #453548;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
         .sidebar nav button span {
             margin-left: 10px;
         }
 
         .upgrade button {
-    /* background: #826d88; */
-    background-color: #874f71;
-    padding: 12px 42px;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: bold;
-    cursor: pointer;
-    color: white;
-    border-bottom: 4px solid rgb(4 14 65);
-    margin-bottom: 14px;
-    border: #874f71;
-    border-bottom: 4px solid rgb(4 14 65);
-    font-size: 16px;
-}
+            /* background: #826d88; */
+            background-color: #874f71;
+            padding: 12px 42px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            border-bottom: 4px solid rgb(4 14 65);
+            margin-bottom: 14px;
+            border: #874f71;
+            border-bottom: 4px solid rgb(4 14 65);
+            font-size: 16px;
+        }
 
         .chart-container {
             width: 400px;
@@ -118,7 +120,7 @@
         }
 
         .chart-title {
-              font-family: "Segoe UI", sans-serif;
+            font-family: "Segoe UI", sans-serif;
             color: #0c3a40;
             font-weight: bold;
             font-size: 16px;
@@ -129,11 +131,14 @@
             display: flex;
         }
 
-        .chart h2 {
-            font-size: 30px;
+        .chart h1 {
+            font-size: 40px;
             padding: 20px 0;
-            color: #040d3b;
-
+            color: #381d44;
+        }
+         .possible h1 {
+            font-size: 40px;
+            color: #381d44;
         }
 
         img {
@@ -241,13 +246,31 @@
             user-select: none;
         }
 
-.sidebar button.active,
-.sidebar a.active {
-      color: #45364c;
-    font-weight: bold;
+        .sidebar button.active,
+        .sidebar a.active {
+            color: #45364c;
+            font-weight: bold;
+        }
+
+        #logoutBtn {
+            background-color: #6a4e77;
+            padding: 12px 42px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            border-bottom: 4px solid rgb(4 14 65);
+            border: #874f71;
+            font-size: 16px;
+        }
+        .demotext {
+color: #000000;
+background: #FFFFFF;
+text-shadow: 2px 2px 0 #bcbcbc, 3px 3px 0 #9c9c9c;
+color: #000000;
+background: #FFFFFF;
 }
-
-
     </style>
 
     </style>
@@ -259,40 +282,39 @@
             <div>
                 <img src="images/quiz.png" alt="">
                 <div class="upgrade">
-                    <button><a href="admin.html" style="color: white;"><i class="fa-solid fa-plus"
-                            style="color: #ffffff;padding-right: 4px;"></i>Create Quiz</a>
-                            </button>
+                    <button onclick="create()"><a href="admin.html" style="color: white;"><i class="fa-solid fa-plus"
+                                style="color: #ffffff;padding-right: 4px;"></i>Create Quiz</a>
+                    </button>
                 </div>
                 <nav>
                     <ul>
-                        <li style="display: flex; align-items: center;"><button class="active" onclick="showSection('reports', this)"><i class="fa-regular fa-file"
-                                style="color: #000000;"></i>Reports</button>
+                        <li style="display: flex; align-items: center;"><button class="active"
+                                onclick="showSection('reports', this)"><i class="fa-regular fa-file"
+                                    style="color: #000000;"></i>Reports</button>
                         </li>
-                        <li style="display: flex; align-items: center;"> <button onclick="showSection('library', this)"><i class="fa-solid fa-plus"
-                                style="color: #000000;"></i>Library</button>
+                        <li style="display: flex; align-items: center;"> <button
+                                onclick="showSection('library', this)"><i class="fa-solid fa-plus"
+                                    style="color: #000000;"></i>Library</button>
                         </li>
                     </ul>
             </div>
-            </nav><button id="loginBtn">Checking...</button>
+            </nav>
+            <div style="display: flex; justify-content: space-between;">
+                <span id="userInfo" style="font-weight: bold;"></span>
+            </div>
+            <link rel="icon" href="favicon.ico" type="image/x-icon">
+            <!-- <span id="userDisplay"></span> -->
+            <button id="logoutBtn">Logout</button>
         </div>
-        <!-- <div id="auth-buttons" style="margin-top: 20px;">
-                <button id="loginSignupBtn"
-                    style="padding: 10px; width: 100%; background-color: rgb(3 15 64); color: white; border: none; border-radius: 6px; cursor: pointer;">
-                    Login / Signup
-                </button>
-                <button id="logoutBtn"
-                    style="padding: 10px; width: 100%; background-color: rgb(93 47 116); color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; display: none;">
-                    Logout
-                </button>
-            </div> -->
+
         <div class="chart section" id="reports">
-            <h2 style="text-align:center">Reports</h2>
+            <h1 style="text-align:center" class="demotext">Reports</h1>
             <div id="charts"></div>
         </div>
 
         <div id="library" class="section solid" style="display: none;">
             <div class="possible">
-                <h1>Library</h1>
+                <h1 class="demotext">Library</h1>
                 <div class="quiz">
                     <div class="text">
                         <h2>Create a Quiz</h2>
@@ -338,8 +360,8 @@
 
         <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-            import { getFirestore, collection, getDocs, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-            import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+            import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+            import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
             const firebaseConfig = {
                 apiKey: "AIzaSyC-SZclK5KRhwtorwsC9gnza0NSqeQA4ns",
@@ -352,70 +374,53 @@
             };
 
             const app = initializeApp(firebaseConfig);
-            const auth = getAuth(app);
-
-            const loginBtn = document.getElementById("loginBtn");
-
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    loginBtn.textContent = "Logout";
-                    loginBtn.onclick = () => {
-                        signOut(auth).then(() => {
-                            alert("Logged out");
-                            window.location.reload();
-                        });
-                    };
-                } else {
-                    loginBtn.textContent = "Login / Signup";
-                    loginBtn.onclick = () => {
-                        window.location.href = "login.html";
-                    };
-                }
-            });
             const db = getFirestore(app);
-
-            // const app = initializeApp(firebaseConfig);
-            // console.log("Firebase initialized");
-
-            // const auth = getAuth(app);
-            // const provider = new GoogleAuthProvider();
-
-            // const loginSignupBtn = document.getElementById("loginSignupBtn");
-            // const logoutBtn = document.getElementById("logoutBtn");
-
-            // // Detect user login state
-            // onAuthStateChanged(auth, (user) => {
-            //     if (user) {
-            //         console.log("User is logged in:", user.email);
-            //         loginSignupBtn.style.display = "none";
-            //         logoutBtn.style.display = "block";
-            //     } else {
-            //         console.log("No user is logged in.");
-            //         loginSignupBtn.style.display = "block";
-            //         logoutBtn.style.display = "none";
-            //     }
-            // });
-
-            // // Redirect to login page on login/signup button click
-            // loginSignupBtn.addEventListener("click", () => {
-            //     window.location.href = "login.html";
-            // });
-
-            // // Logout user
-            // logoutBtn.addEventListener("click", async () => {
-            //     try {
-            //         await signOut(auth);
-            //         console.log("User signed out.");
-            //         // You can optionally redirect:
-            //         // window.location.href = "login.html";
-            //     } catch (error) {
-            //         console.error("Error during sign out:", error);
-            //     }
-            // });
+            const auth = getAuth(app);
+            await setPersistence(auth, browserLocalPersistence);
 
             const chartContainer = document.getElementById("charts");
+            const loginBtn = document.getElementById("loginBtn");
+            const userDisplay = document.getElementById("userDisplay");
+          
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    console.log("User not logged in. Redirecting to login...");
+                    window.location.href = "login.html";
+                } else {
+                    console.log("User is logged in:", user.email);
+                    if (userDisplay) {
+                        userDisplay.textContent = `Logged in as ${user.displayName || user.email}`;
+                    }
 
-            async function renderCharts() {
+                    if (loginBtn) {
+                        loginBtn.textContent = "Logout";
+                        loginBtn.onclick = () => {
+                            signOut(auth).then(() => {
+                                alert("Logged out");
+                                window.location.href = "login.html";
+                            });
+                        };
+                    }
+
+                    await renderUserCharts(user.uid);
+                }
+            });
+
+            const logoutBtn = document.getElementById("logoutBtn");
+            if (logoutBtn) {
+                logoutBtn.addEventListener("click", () => {
+                    signOut(auth)
+                        .then(() => {
+                            console.log("User signed out");
+                            window.location.href = "login.html";
+                        })
+                        .catch((error) => {
+                            console.error("Sign out error:", error);
+                        });
+                });
+            }
+
+            async function renderUserCharts(userId) {
                 try {
                     const quizzesSnapshot = await getDocs(collection(db, "quizzes"));
                     console.log(`Total quizzes found: ${quizzesSnapshot.size}`);
@@ -427,23 +432,22 @@
 
                         const resultsRef = collection(db, "quizzes", quizId, "results");
                         const resultsSnapshot = await getDocs(resultsRef);
-                        console.log(`Total results found for "${quizTitle}": ${resultsSnapshot.size}`);
 
                         let correct = 0;
                         let incorrect = 0;
+                        let hasUserData = false;
 
                         resultsSnapshot.forEach((resultDoc) => {
                             const data = resultDoc.data();
-                            if (data.score !== undefined && data.total !== undefined) {
+                            if (data.userId === userId && data.score !== undefined && data.total !== undefined) {
+                                hasUserData = true;
                                 correct += data.score;
                                 incorrect += (data.total - data.score);
                             }
                         });
 
-                        console.log(`${quizTitle} - Correct: ${correct}, Incorrect: ${incorrect}`);
-
-                        if (correct + incorrect === 0) {
-                            console.log(`Skipping chart for "${quizTitle}" due to no data`);
+                        if (!hasUserData) {
+                            console.log(`Skipping "${quizTitle}" - No data for user`);
                             return;
                         }
 
@@ -503,33 +507,21 @@
                     console.error("Error loading quiz data:", error);
                 }
             }
-
-            renderCharts();
-
         </script>
+
         <script>
-            // function showSection(sectionId) {
-            //     const sections = document.querySelectorAll('.section');
-            //     sections.forEach(sec => sec.style.display = 'none');
-            //     document.getElementById(sectionId).style.display = 'block';
-            // }
+            function showSection(sectionId, clickedBtn) {
+                const sections = document.querySelectorAll('.section');
+                sections.forEach(sec => sec.style.display = 'none');
 
-  function showSection(sectionId, clickedBtn) {
-    // Hide all sections
-    const sections = document.querySelectorAll('.section');
-    sections.forEach(sec => sec.style.display = 'none');
+                document.getElementById(sectionId).style.display = 'block';
 
-    // Show the selected section
-    document.getElementById(sectionId).style.display = 'block';
+                const buttons = document.querySelectorAll('.sidebar button, .sidebar a');
+                buttons.forEach(btn => btn.classList.remove('active'));
 
-    // Remove 'active' from all buttons
-    const buttons = document.querySelectorAll('.sidebar button, .sidebar a');
-    buttons.forEach(btn => btn.classList.remove('active'));
+                clickedBtn.classList.add('active');
+            }
 
-    // Add 'active' to the clicked button
-    clickedBtn.classList.add('active');
-}
-            
             function create() {
                 window.location.href = "admin.html";
             }
