@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>Multiple Quiz Results</title>
+    <title>Quiz App</title>
+    <link rel="icon" href="images/logo.jpg">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -136,7 +137,8 @@
             padding: 20px 0;
             color: #381d44;
         }
-         .possible h1 {
+
+        .possible h1 {
             font-size: 40px;
             color: #381d44;
         }
@@ -264,13 +266,14 @@
             border: #874f71;
             font-size: 16px;
         }
+
         .demotext {
-color: #000000;
-background: #FFFFFF;
-text-shadow: 2px 2px 0 #bcbcbc, 3px 3px 0 #9c9c9c;
-color: #000000;
-background: #FFFFFF;
-}
+            color: #000000;
+            background: #FFFFFF;
+            text-shadow: 2px 2px 0 #bcbcbc, 3px 3px 0 #9c9c9c;
+            color: #000000;
+            background: #FFFFFF;
+        }
     </style>
 
     </style>
@@ -381,7 +384,7 @@ background: #FFFFFF;
             const chartContainer = document.getElementById("charts");
             const loginBtn = document.getElementById("loginBtn");
             const userDisplay = document.getElementById("userDisplay");
-          
+
             onAuthStateChanged(auth, async (user) => {
                 if (!user) {
                     console.log("User not logged in. Redirecting to login...");
